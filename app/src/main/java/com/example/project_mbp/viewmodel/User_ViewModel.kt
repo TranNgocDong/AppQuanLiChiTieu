@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_mbp.model.User
 import com.example.project_mbp.repository.User_Repository
+import com.google.firebase.auth.FirebaseAuth // 🔹 (added)
+import com.google.firebase.firestore.FirebaseFirestore // 🔹 (added)
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +52,7 @@ class User_ViewModel : ViewModel() {
                     _currentUser.value = user
                     _isLogined.value = true
                     _message.value = "Đăng nhập thành công!"
+                    loadCurrentUser() // 🔹 (added)
                 } else {
                     _message.value = "Đăng nhập thất bại!"
                 }
@@ -87,6 +90,7 @@ class User_ViewModel : ViewModel() {
                     _currentUser.value = fullUser ?: user
                     _isLogined.value = true
                     _message.value = "Đăng nhập thành công!"
+                    loadCurrentUser() // 🔹 (added)
                 } else {
                     _message.value = "Email hoặc mật khẩu không đúng!"
                 }
@@ -105,6 +109,7 @@ class User_ViewModel : ViewModel() {
                 val firestoreUser = repository.getUserByUid(user.uid)
                 _currentUser.value = firestoreUser ?: user
                 _isLogined.value = true
+                loadCurrentUser() // 🔹 (added)
             } else {
                 _isLogined.value = false
             }
@@ -268,9 +273,24 @@ class User_ViewModel : ViewModel() {
             if (success) {
                 _currentUser.value = updatedUser
                 _message.value = "Cập nhật thông tin thành công!"
+                loadCurrentUser() // 🔹 (added)
             } else {
                 _message.value = "Lỗi cập nhật thông tin!"
             }
         }
+    }
+
+
+    // ---------------- LOAD CURRENT USER (NEW) ----------------
+    fun loadCurrentUser() { // 🔹 (added)
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance().collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val userData = snapshot.toObject(User::class.java)
+                if (userData != null) {
+                    _currentUser.value = userData
+                }
+            }
     }
 }

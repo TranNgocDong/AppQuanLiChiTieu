@@ -8,5 +8,4 @@ data class User(
     val provider: String = "",
     val birthday: String? = null,
     val phone: String? = null
-
 )

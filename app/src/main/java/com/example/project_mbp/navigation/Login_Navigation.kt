@@ -53,7 +53,7 @@ fun Login_Navigation(vm: User_ViewModel, googleSignInClient: GoogleSignInClient)
             )
         }
 
-        composable("profile") { Profile_Screen(vm = vm) }
+        composable("profile") { Profile_Screen(vm = vm, navController) }
         composable("register") {Register_Screen(vm = vm, navController, googleSignInClient = googleSignInClient)  }
 
     }

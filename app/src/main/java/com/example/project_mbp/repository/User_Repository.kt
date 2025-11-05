@@ -148,13 +148,16 @@ class User_Repository {
     // Cập nhật thông tin user
     suspend fun updateUserInfo(uid: String, updatedUser: User): Boolean {
         return try {
-            db.collection("users").document(uid).set(updatedUser).await()
+            db.collection("users").document(uid)
+                .set(updatedUser, com.google.firebase.firestore.SetOptions.merge())
+                .await()
             true
         } catch (e: Exception) {
             e.printStackTrace()
             false
         }
     }
+
 
     // Lấy user từ Firestore
     suspend fun getUserFromFirestore(uid: String): User? {

@@ -96,7 +96,7 @@ fun Register_Screen(
             Image(
                 painter = painterResource(R.drawable.logo_login),
                 contentDescription = "logo_login",
-                modifier = Modifier.size(170.dp)
+                modifier = Modifier.size( 80.dp)
             )
         } // box 1
 
