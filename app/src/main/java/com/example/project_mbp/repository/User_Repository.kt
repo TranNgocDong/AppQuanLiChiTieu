@@ -91,37 +91,67 @@ class User_Repository {
         auth.signOut()
     }
 
-    // Đăng ký tài khoản Email + Password
-    suspend fun registerWithEmail(email: String, password: String, name: String): User? {
+    suspend fun registerWithEmail_returnUid(email: String, password: String, name: String): String? {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user ?: return null
 
-            // Gửi email xác minh
+            // Gửi email xác minh (FirebaseAuth giữ user đã đăng ký, chưa verified)
             user.sendEmailVerification().await()
 
-            val newUser = User(
-                uid = user.uid,
-                email = email,
-                name = name
-            )
-            db.collection("users").document(user.uid).set(newUser).await()
-            newUser
+            // Trả về uid cho ViewModel để bắt đầu luồng kiểm tra xác minh
+            user.uid
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
-    //check mail xac minh
+
+    // Lưu user vào Firestore
+    suspend fun saveUserToFirestore(uid: String, email: String, name: String): Boolean {
+        return try {
+            val newUser = User(uid = uid, email = email, name = name)
+            db.collection("users").document(uid).set(newUser).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    // Gửi lại email xác minh (cho currentUser đã create)
+    suspend fun resendVerificationEmail(): Boolean {
+        return try {
+            val user = auth.currentUser ?: return false
+            user.sendEmailVerification().await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    // Reload current Firebase user (để cập nhật trạng thái isEmailVerified)
+    suspend fun reloadCurrentUser() {
+        try {
+            auth.currentUser?.reload()?.await()
+        } catch (_: Exception) {
+            // ignore
+        }
+    }
+
+    // check current user verified
     fun isEmailVerified(): Boolean {
         return auth.currentUser?.isEmailVerified ?: false
     }
+
     // Cập nhật thông tin user
     suspend fun updateUserInfo(uid: String, updatedUser: User): Boolean {
         return try {
             db.collection("users").document(uid).set(updatedUser).await()
             true
         } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
     }

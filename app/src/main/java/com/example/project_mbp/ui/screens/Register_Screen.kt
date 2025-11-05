@@ -22,22 +22,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +58,10 @@ fun Register_Screen(
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
 
+    // 🟨 THÊM: trạng thái chờ xác minh + countdown
+    val awaiting by vm.isAwaitingVerification.collectAsState()
+    val secondsLeft by vm.verificationSeconds.collectAsState()
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -83,7 +81,6 @@ fun Register_Screen(
             vm.setMessage("Đăng nhập Google thất bại")
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -123,22 +120,15 @@ fun Register_Screen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Đăng Ký",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 24.sp
                         )
 
                         Spacer(Modifier.height(28.dp))
                         TextField_Custom("Nhập email...", email, onChange = { email = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom(
-                            "Nhập mật khẩu...",
-                            password1,
-                            onChange = { password1 = it })
+                        TextField_Custom("Nhập mật khẩu...", password1, onChange = { password1 = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom(
-                            "Xác Nhận Mật khẩu",
-                            password2,
-                            onChange = { password2 = it })
+                        TextField_Custom("Xác Nhận Mật khẩu", password2, onChange = { password2 = it })
                     }
                 }
 
@@ -149,30 +139,78 @@ fun Register_Screen(
                         if (mess != null) {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(text = mess!!, color = Color.Red, fontSize = 16.sp)
-                            LaunchedEffect(mess) {
-                                delay(3000L)
-                                vm.clearMessage()
-                            }
+                            // message auto clear handled in VM callers if needed
                             Spacer(modifier = Modifier.height(12.dp))
                         }
 
-                        Button(
-                            onClick = {
-                                vm.registerWithEmail(email, password1, password2, "Người dùng")
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth(0.9f)
-                                .height(56.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFF36435)
-                            ),
-                            shape = RoundedCornerShape(15.dp)
-                        ) {
-                            Text(
-                                text = "Đăng Ký",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        // Nếu chưa đang chờ xác minh -> nút Đăng Ký
+                        if (!awaiting) {
+                            Button(
+                                onClick = {
+                                    vm.registerWithEmail(email, password1, password2, "Người dùng")
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth(0.9f)
+                                    .height(56.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFF36435)
+                                ),
+                                shape = RoundedCornerShape(15.dp)
+                            ) {
+                                Text(
+                                    text = "Đăng Ký",
+                                    fontSize = 20.sp
+                                )
+                            }
+                        } else {
+                            // Khi đang chờ xác minh
+                            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                                ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    modifier = Modifier
+                                        .padding(start = 30.dp)
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            // manual check ngay lập tức
+                                            vm.checkEmailVerificationNow()
+                                        },
+                                        modifier = Modifier
+                                            .height(48.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                                    ) {
+                                        Text("Kiểm tra xác minh")
+                                    }
+
+                                    if (secondsLeft > 0) {
+                                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                                    }
+
+                                    Text(text = "(${secondsLeft}s)", fontSize = 14.sp)
+                                }
+
+                                Spacer(Modifier.height(8.dp))
+
+                                // khi hết 60s -> cho phép gửi lại
+                                if (secondsLeft == 0) {
+                                    Button(
+                                        onClick = { vm.resendVerificationEmail() },
+                                        modifier = Modifier
+                                            .height(44.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
+                                    ) {
+                                        Text("Gửi lại")
+                                    }
+
+                                    Spacer(Modifier.height(8.dp))
+                                    Text("Nếu không nhận được email, kiểm tra hộp thư Spam.", fontSize = 12.sp)
+                                } else {
+                                    Spacer(Modifier.height(8.dp))
+                                }
+                            }
                         }
 
                         Spacer(Modifier.height(20.dp))
@@ -181,7 +219,7 @@ fun Register_Screen(
                             thickness = 2.dp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        Text(text = "Hoặc", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text(text = "Hoặc", fontSize = 16.sp)
                         Spacer(Modifier.height(4.dp))
 
                         Row(
@@ -219,19 +257,15 @@ fun Register_Screen(
                                 "Đăng nhập",
                                 modifier = Modifier
                                     .clickable {
-                                        navController.navigate("login?email=$email&password=$password1") {
-                                            popUpTo("register_screen") { inclusive = true }
-                                        }
+                                        navController.navigate("login")
                                     },
                                 color = Color(0xFF21817B),
                                 textDecoration = TextDecoration.Underline
                             )
                         }
-                    } // column box 3
-                } // box 3
+                    }
+                }
             }
-        } // main box
-    } // main column
-
+        }
+    }
 }
-

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -145,7 +146,13 @@ fun Login_Screen(
 
                         if (mess != null) {
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = mess!!, color = Color.Red, fontSize = 16.sp)
+                            Text(
+                                text = mess!!,
+                                color = Color.Red,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                             LaunchedEffect(mess) {
                                 delay(3000L)
                                 vm.clearMessage()
