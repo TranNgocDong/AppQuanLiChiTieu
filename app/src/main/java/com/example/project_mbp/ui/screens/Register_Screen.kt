@@ -58,9 +58,11 @@ fun Register_Screen(
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
 
+
     // 🟨 THÊM: trạng thái chờ xác minh + countdown
     val awaiting by vm.isAwaitingVerification.collectAsState()
     val secondsLeft by vm.verificationSeconds.collectAsState()
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -81,6 +83,7 @@ fun Register_Screen(
             vm.setMessage("Đăng nhập Google thất bại")
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -120,7 +123,12 @@ fun Register_Screen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Đăng Ký",
+
                             fontSize = 24.sp
+
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+
                         )
 
                         Spacer(Modifier.height(28.dp))
