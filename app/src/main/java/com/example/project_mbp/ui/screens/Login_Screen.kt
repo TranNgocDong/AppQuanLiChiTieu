@@ -1,5 +1,6 @@
 package com.example.project_mbp.ui.screens
 
+import android.R.attr.dialogMessage
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -45,7 +46,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+import com.example.project_mbp.ui.components.messDialog
 import com.example.project_mbp.ui.components.TextField_Custom
+import com.example.project_mbp.ui.components.messDialog
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -67,6 +70,10 @@ fun Login_Screen(
     val context = LocalContext.current
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
+
+    val checklogin by vm.isLogined.collectAsState()
+
+    var showDialog by remember { mutableStateOf(false) }
 
 
     val launcher = rememberLauncherForActivityResult(
@@ -91,6 +98,7 @@ fun Login_Screen(
 
 
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +113,7 @@ fun Login_Screen(
             Image(
                 painter = painterResource(R.drawable.logo_login),
                 contentDescription = "logo_login",
-                modifier = Modifier.size(170.dp)
+                modifier = Modifier.size(150.dp)
             )
         } // box 1
 
@@ -140,12 +148,12 @@ fun Login_Screen(
                     }
                 }
 
-                Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(24.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                        if (mess != null) {
-                            Spacer(modifier = Modifier.height(4.dp))
+                        if (mess != null && checklogin==false) {
+
                             Text(
                                 text = mess!!,
                                 color = Color.Red,
@@ -157,7 +165,8 @@ fun Login_Screen(
                                 delay(3000L)
                                 vm.clearMessage()
                             }
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
+
                         }
 
                         Button(
@@ -234,6 +243,8 @@ fun Login_Screen(
                 } // box 3
             }
         } // main box
+
+
     } // main column
 
 }
