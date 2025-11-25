@@ -297,6 +297,4 @@ fun icon_login(iconId: Int, contentDecrep: String, size1: Int, size2: Int) {
                 .size(size1.dp)
         )
     }
-
-
 }
