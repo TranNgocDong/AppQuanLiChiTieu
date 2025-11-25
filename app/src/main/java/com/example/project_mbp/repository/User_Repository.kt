@@ -221,4 +221,23 @@ class User_Repository {
             false
         }
     }
+    suspend fun sendPasswordResetEmail(email: String): Boolean {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+    suspend fun updatePassword(newPassword: String): Boolean {
+        val user = auth.currentUser ?: return false
+        return try {
+            user.updatePassword(newPassword).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 }

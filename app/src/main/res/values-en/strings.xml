@@ -37,7 +37,7 @@
     <string name="register_title">Register</string>
     <string name="enter_email_hint">Enter email...</string>
     <string name="enter_password_hint">Enter password...</string>
-    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="confirm_password_hint">Confirm Password...</string>
     <string name="register_button">Register</string>
     <string name="check_verification">Check Verification</string>
     <string name="resend">Resend</string>
@@ -155,10 +155,18 @@
     <string name="display_name_label">Display Name</string>
     <string name="phone_number_label">Phone Number</string>
     <string name="birthday_label_input">Birthday (dd/MM/yyyy)</string>
-
+    <string name="forgot_password">Forgot password?</string>
     <string name="profile_name_label">Name</string>
     <string name="profile_email_label">Email</string>
     <string name="profile_phone_label">Phone Number</string>
     <string name="profile_birthday_label">Birthday</string>
-
+    <string name="password_reset_sent">A password reset link has been sent to your email. Please check your inbox!</string>
+    <string name="error_reset_password_failed">Request failed. Please check your email address.</string>
+    <string name="send_link">Send Link</string>
+    <string name="back">Back</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="password_reset_guide">Enter your email address below to receive a password reset link.</string>
+    <string name="password_reset_sent_success">A password reset link has been successfully sent to your email.</string>
+    <string name="password_update_success">Password updated successfully!</string>
+    <string name="password_update_failed">Password update failed! You might need to log in again.</string>
 </resources>

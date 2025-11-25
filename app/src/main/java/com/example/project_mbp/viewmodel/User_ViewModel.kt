@@ -131,6 +131,7 @@ class User_ViewModel : ViewModel() {
         }
     }
 
+
     fun checkLoginStatus() {
         viewModelScope.launch {
             val user = repository.getCurrentUser()
@@ -340,6 +341,53 @@ class User_ViewModel : ViewModel() {
                 } else {
                     setMessage(R.string.update_failed)
                 }
+            }
+        }
+    }
+    fun sendPasswordReset(email: String) {
+        viewModelScope.launch {
+            if (email.isBlank() || !email.contains("@")) {
+                setMessage(R.string.invalid_email) // Bạn cần thêm string này
+                return@launch
+            }
+
+            try {
+                val success = repository.sendPasswordResetEmail(email)
+                if (success) {
+                    // Đăng xuất ngay lập tức sau khi gửi email thành công
+                    repository.logout()
+                    _isLogined.value = false
+                    _currentUser.value = null
+
+                    setMessage(R.string.password_reset_sent) // Bạn cần thêm string này
+                } else {
+                    setMessage(R.string.error_reset_password_failed) // Bạn cần thêm string này
+                }
+            } catch (e: Exception) {
+                setMessage(R.string.error_reset_password_failed)
+            }
+        }
+    }
+    fun updatePassword(newPassword: String, confirmPassword: String) {
+        viewModelScope.launch {
+            when {
+                newPassword.isBlank() || confirmPassword.isBlank() -> {
+                    setMessage(R.string.error_empty_password)
+                    return@launch
+                }
+                newPassword != confirmPassword -> {
+                    setMessage(R.string.error_password_not_match)
+                    return@launch
+                }
+                // Thêm kiểm tra độ dài mật khẩu nếu cần
+            }
+
+            val success = repository.updatePassword(newPassword)
+            if (success) {
+                setMessage(R.string.password_update_success) // Cần thêm chuỗi này
+            } else {
+                // Lưu ý: Firebase có thể yêu cầu người dùng đăng nhập lại (re-authenticate) trước khi đổi mật khẩu
+                setMessage(R.string.password_update_failed) // Cần thêm chuỗi này
             }
         }
     }

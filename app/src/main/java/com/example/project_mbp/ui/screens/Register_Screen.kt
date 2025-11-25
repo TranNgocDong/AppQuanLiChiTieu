@@ -126,16 +126,16 @@ fun Register_Screen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Đăng Ký",
+                            text = stringResource(R.string.register_title),
                             fontSize = 24.sp
                         )
 
                         Spacer(Modifier.height(28.dp))
-                        TextField_Custom("Nhập email...", email, onChange = { email = it })
+                        TextField_Custom(stringResource(R.string.enter_email_hint), email, onChange = { email = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom("Nhập mật khẩu...", password1, onChange = { password1 = it })
+                        TextField_Custom(stringResource(R.string.enter_password_hint), password1, onChange = { password1 = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom("Xác Nhận Mật khẩu", password2, onChange = { password2 = it })
+                        TextField_Custom(stringResource(R.string.confirm_password_hint), password2, onChange = { password2 = it })
                     }
                 }
 
@@ -168,7 +168,7 @@ fun Register_Screen(
                                 shape = RoundedCornerShape(15.dp)
                             ) {
                                 Text(
-                                    text = "Đăng Ký",
+                                    text = stringResource(R.string.register_button),
                                     fontSize = 20.sp
                                 )
                             }
@@ -192,7 +192,7 @@ fun Register_Screen(
                                             .height(48.dp),
                                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
                                     ) {
-                                        Text("Kiểm tra xác minh")
+                                        Text(stringResource(R.string.check_verification))
                                     }
 
                                     if (secondsLeft > 0) {
@@ -212,11 +212,11 @@ fun Register_Screen(
                                             .height(44.dp),
                                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
                                     ) {
-                                        Text("Gửi lại")
+                                        Text(stringResource(R.string.resend))
                                     }
 
                                     Spacer(Modifier.height(8.dp))
-                                    Text("Nếu không nhận được email, kiểm tra hộp thư Spam.", fontSize = 12.sp)
+                                    Text(stringResource(R.string.spam_check_hint), fontSize = 12.sp)
                                 } else {
                                     Spacer(Modifier.height(8.dp))
                                 }
@@ -229,7 +229,7 @@ fun Register_Screen(
                             thickness = 2.dp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        Text(text = "Hoặc", fontSize = 16.sp)
+                        Text(text = stringResource(R.string.or), fontSize = 16.sp)
                         Spacer(Modifier.height(4.dp))
 
                         Row(
@@ -262,9 +262,9 @@ fun Register_Screen(
 
                         Spacer(Modifier.height(16.dp))
                         Row {
-                            Text("Bạn đã có tài khoản? ")
+                            Text(stringResource(R.string.have_account))
                             Text(
-                                "Đăng nhập",
+                                stringResource(R.string.login_link),
                                 modifier = Modifier
                                     .clickable {
                                         navController.navigate("login")

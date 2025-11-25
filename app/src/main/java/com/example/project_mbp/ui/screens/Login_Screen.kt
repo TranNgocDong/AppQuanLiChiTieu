@@ -139,7 +139,7 @@ fun Login_Screen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Đăng Nhập",
+                            text = stringResource(R.string.login_title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -147,11 +147,31 @@ fun Login_Screen(
                         Spacer(Modifier.height(28.dp))
                         TextField_Custom("Email", email, onChange = { email = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom("Mật khẩu", password, onChange = { password = it })
+                        TextField_Custom(stringResource(R.string.password_hint), password, onChange = { password = it })
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 12.dp, top = 4.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = stringResource(R.string.forgot_password),
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate("forgot_password")
+                                    },
+                                color = Color(0xFF21817B),
+                                textDecoration = TextDecoration.Underline,
+                                fontSize = 16.sp
+                            )
+                        }
                     }
                 }
 
-                Spacer(Modifier.height(28.dp))
+                // Khoảng cách này được giảm đi 1 phần do Row "Quên mật khẩu" vừa được thêm
+                Spacer(Modifier.height(16.dp))
+
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -190,7 +210,7 @@ fun Login_Screen(
                             shape = RoundedCornerShape(15.dp)
                         ) {
                             Text(
-                                text = "Đăng Nhập",
+                                text = stringResource(R.string.login_button),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -202,7 +222,7 @@ fun Login_Screen(
                             thickness = 2.dp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        Text(text = "Hoặc", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text(text = stringResource(R.string.or), fontSize = 16.sp, fontWeight = FontWeight.Medium)
                         Spacer(Modifier.height(4.dp))
 
                         Row(
@@ -236,9 +256,9 @@ fun Login_Screen(
 
                         Spacer(Modifier.height(16.dp))
                         Row {
-                            Text("Bạn chưa có tài khoản? ")
+                            Text(stringResource(R.string.no_account))
                             Text(
-                                "Đăng Ký",
+                                stringResource(R.string.register_link),
                                 modifier = Modifier
                                     .clickable {
                                         navController.navigate("register")
