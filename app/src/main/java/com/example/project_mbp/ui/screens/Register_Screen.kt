@@ -1,9 +1,11 @@
 package com.example.project_mbp.ui.screens
 
+import android.R.attr.value
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +31,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,12 +41,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+import com.example.project_mbp.animations.Animations.scaleClickAnimation
 import com.example.project_mbp.ui.components.TextField_Custom
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun Register_Screen(
@@ -61,6 +66,9 @@ fun Register_Screen(
     // 🟨 THÊM: trạng thái chờ xác minh + countdown
     val awaiting by vm.isAwaitingVerification.collectAsState()
     val secondsLeft by vm.verificationSeconds.collectAsState()
+
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()//
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -147,11 +155,15 @@ fun Register_Screen(
                         if (!awaiting) {
                             Button(
                                 onClick = {
-                                    vm.registerWithEmail(email, password1, password2, "Người dùng")
+                                    scope.launch{
+                                        scaleClickAnimation(scale)
+                                        vm.registerWithEmail(email, password1, password2, "Người dùng")
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth(0.9f)
-                                    .height(56.dp),
+                                    .height(56.dp)
+                                    .scale(scale.value),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFF36435)
                                 ),

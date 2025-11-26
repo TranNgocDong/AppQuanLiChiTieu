@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,10 +31,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,12 +48,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+import com.example.project_mbp.animations.Animations
+import com.example.project_mbp.animations.Animations.scaleClickAnimation
 import com.example.project_mbp.ui.components.TextField_Custom
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -67,6 +73,10 @@ fun Login_Screen(
     val context = LocalContext.current
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
+
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()//
+
 
 
     val launcher = rememberLauncherForActivityResult(
@@ -162,11 +172,17 @@ fun Login_Screen(
 
                         Button(
                             onClick = {
-                                vm.loginWithEmail(email, password)
+                                scope.launch {
+                                    // GỌI animation khi nhấn nút
+                                    scaleClickAnimation(scale)
+                                    // Sau khi animation xong thì gọi hàm đăng nhập
+                                    vm.loginWithEmail(email, password)
+                                }
                             },
                             modifier = Modifier
                                 .fillMaxWidth(0.9f)
-                                .height(56.dp),
+                                .height(56.dp)
+                                .scale(scale.value),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFF36435)
                             ),
