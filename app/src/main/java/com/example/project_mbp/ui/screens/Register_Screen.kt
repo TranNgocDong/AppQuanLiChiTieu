@@ -30,6 +30,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,7 +62,6 @@ fun Register_Screen(
     val context = LocalContext.current
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
-
     // 🟨 THÊM: trạng thái chờ xác minh + countdown
     val awaiting by vm.isAwaitingVerification.collectAsState()
     val secondsLeft by vm.verificationSeconds.collectAsState()
@@ -161,7 +161,8 @@ fun Register_Screen(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth(0.9f)
-                                    .height(56.dp),
+                                    .height(56.dp)
+                                    .scale(scale.value),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFF36435)
                                 ),
