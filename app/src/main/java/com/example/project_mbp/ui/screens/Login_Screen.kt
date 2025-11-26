@@ -48,8 +48,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+<<<<<<< HEAD
 import com.example.project_mbp.animations.Animations
 import com.example.project_mbp.animations.Animations.scaleClickAnimation
+=======
+import com.example.project_mbp.animations.scaleClickAnimation
+>>>>>>> 75b993ce968a9dc50696ce07a796d0f1cf99d350
 import com.example.project_mbp.ui.components.TextField_Custom
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -57,7 +61,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+<<<<<<< HEAD
 
+=======
+>>>>>>> 75b993ce968a9dc50696ce07a796d0f1cf99d350
 
 @Composable
 fun Login_Screen(
@@ -70,15 +77,23 @@ fun Login_Screen(
     var email by remember { mutableStateOf(prefillEmail) }
     var password by remember { mutableStateOf(prefillPassword) }
 
+    //by TranNgocdDong:
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()//
+
+
     val context = LocalContext.current
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
 
+<<<<<<< HEAD
     val scale = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()//
 
 
 
+=======
+>>>>>>> 75b993ce968a9dc50696ce07a796d0f1cf99d350
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -99,8 +114,6 @@ fun Login_Screen(
         }
     }
 
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -117,7 +130,7 @@ fun Login_Screen(
                 contentDescription = "logo_login",
                 modifier = Modifier.size(170.dp)
             )
-        } // box 1
+        }
 
         Box(
             modifier = Modifier
@@ -134,7 +147,8 @@ fun Login_Screen(
             ) {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center
+
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
@@ -182,7 +196,11 @@ fun Login_Screen(
                             modifier = Modifier
                                 .fillMaxWidth(0.9f)
                                 .height(56.dp)
+<<<<<<< HEAD
                                 .scale(scale.value),
+=======
+                                .scale(scale.value), // Áp dụng hiệu ứng phóng to/thu nhỏ
+>>>>>>> 75b993ce968a9dc50696ce07a796d0f1cf99d350
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFF36435)
                             ),
@@ -208,7 +226,6 @@ fun Login_Screen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(52.dp)
                         ) {
-                            // 🔹 CHỈ THÊM clickable ở đây — giữ nguyên kích thước, hình ảnh
                             Image(
                                 painter = painterResource(R.drawable.logo_google),
                                 contentDescription = "logo_google",
@@ -246,12 +263,9 @@ fun Login_Screen(
                                 textDecoration = TextDecoration.Underline
                             )
                         }
-                    } // column box 3
-                } // box 3
+                    }
+                }
             }
-        } // main box
-    } // main column
-
+        }
+    }
 }
-
-
