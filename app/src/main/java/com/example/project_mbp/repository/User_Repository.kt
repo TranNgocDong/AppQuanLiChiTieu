@@ -70,9 +70,9 @@ class User_Repository {
         val result = auth.signInWithEmailAndPassword(email, password).await()
         val firebaseUser = result.user ?: return null
 
-        // THÊM KIỂM TRA EMAIL ĐÃ XÁC MINH CHƯA
+        // Kiểm tra email xác minh
         if (!firebaseUser.isEmailVerified) {
-            auth.signOut() // đăng xuất ngay để tránh login “ảo”
+            auth.signOut()
             throw Exception("Email chưa được xác minh. Vui lòng kiểm tra hộp thư Gmail của bạn.")
         }
 
@@ -121,15 +121,16 @@ class User_Repository {
         auth.signOut()
     }
 
+    // Đăng ký tài khoản Email + Password (trả về UID)
     suspend fun registerWithEmail_returnUid(email: String, password: String, name: String): String? {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user ?: return null
 
-            // Gửi email xác minh (FirebaseAuth giữ user đã đăng ký, chưa verified)
+            // Gửi email xác minh
             user.sendEmailVerification().await()
 
-            // Trả về uid cho ViewModel để bắt đầu luồng kiểm tra xác minh
+            // Trả về UID cho ViewModel để xử lý luồng xác minh
             user.uid
         } catch (e: Exception) {
             e.printStackTrace()
@@ -149,7 +150,7 @@ class User_Repository {
         }
     }
 
-    // Gửi lại email xác minh (cho currentUser đã create)
+    // Gửi lại email xác minh
     suspend fun resendVerificationEmail(): Boolean {
         return try {
             val user = auth.currentUser ?: return false
@@ -161,16 +162,15 @@ class User_Repository {
         }
     }
 
-    // Reload current Firebase user (để cập nhật trạng thái isEmailVerified)
+    // Reload current Firebase user
     suspend fun reloadCurrentUser() {
         try {
             auth.currentUser?.reload()?.await()
         } catch (_: Exception) {
-            // ignore
         }
     }
 
-    // check current user verified
+    // Kiểm tra email đã xác minh chưa
     fun isEmailVerified(): Boolean {
         return auth.currentUser?.isEmailVerified ?: false
     }

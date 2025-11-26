@@ -1,5 +1,6 @@
 package com.example.project_mbp.ui.screens
 
+<<<<<<< HEAD
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -504,4 +505,13 @@ private fun getMonthAbbreviation(monthIndex: Int): String {
         calendar.set(Calendar.MONTH, monthIndex)
         SimpleDateFormat("MMM", currentLocale).format(calendar.time)
     }
+=======
+import androidx.compose.runtime.Composable
+import com.example.project_mbp.viewmodel.Transaction_ViewModel
+import com.example.project_mbp.viewmodel.User_ViewModel
+
+@Composable
+fun ThongKeScreen(transactionViewModel: Transaction_ViewModel, userViewModel: User_ViewModel){
+
+>>>>>>> main
 }

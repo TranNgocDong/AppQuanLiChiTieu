@@ -1,5 +1,6 @@
 package com.example.project_mbp.ui.screens
 
+import android.R.attr.value
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -34,14 +35,22 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+<<<<<<< HEAD
 import androidx.compose.ui.res.stringResource
+=======
+import androidx.compose.ui.text.font.FontWeight
+>>>>>>> main
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+<<<<<<< HEAD
 import com.example.project_mbp.animations.Animations.scaleClickAnimation
+=======
+import com.example.project_mbp.animations.scaleClickAnimation
+>>>>>>> main
 import com.example.project_mbp.ui.components.TextField_Custom
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -62,12 +71,23 @@ fun Register_Screen(
     val context = LocalContext.current
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
+<<<<<<< HEAD
+=======
+
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()
+
+
+>>>>>>> main
     // 🟨 THÊM: trạng thái chờ xác minh + countdown
     val awaiting by vm.isAwaitingVerification.collectAsState()
     val secondsLeft by vm.verificationSeconds.collectAsState()
 
+<<<<<<< HEAD
     val scale = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()//
+=======
+>>>>>>> main
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -88,6 +108,7 @@ fun Register_Screen(
             vm.setMessage(R.string.error_google_signin)
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -126,8 +147,16 @@ fun Register_Screen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
+<<<<<<< HEAD
                             text = stringResource(R.string.register_title),
                             fontSize = 24.sp
+=======
+                            text = "Đăng Ký",
+
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+
+>>>>>>> main
                         )
 
                         Spacer(Modifier.height(28.dp))
@@ -154,15 +183,26 @@ fun Register_Screen(
                         if (!awaiting) {
                             Button(
                                 onClick = {
+<<<<<<< HEAD
                                     scope.launch{
                                         scaleClickAnimation(scale)
+=======
+                                    scope.launch {
+                                        // Gọi animation khi nhấn nút
+                                        scaleClickAnimation(scale)
+                                        // Sau khi animation kết thúc → gọi đăng ký
+>>>>>>> main
                                         vm.registerWithEmail(email, password1, password2, "Người dùng")
                                     }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth(0.9f)
                                     .height(56.dp)
+<<<<<<< HEAD
                                     .scale(scale.value),
+=======
+                                    .scale(scale.value), //  Áp dụng scale vào nút,
+>>>>>>> main
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFF36435)
                                 ),

@@ -11,8 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+<<<<<<< HEAD
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
+=======
+import androidx.compose.foundation.shape.RoundedCornerShape // <-- Thêm import
+import androidx.compose.material3.Surface // <-- Thêm import
+>>>>>>> main
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+<<<<<<< HEAD
 import androidx.compose.ui.res.stringResource
+=======
+>>>>>>> main
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +42,11 @@ import com.example.project_mbp.ui.theme.TextLight
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+<<<<<<< HEAD
 // === HÀM SỐ 1: TIÊU ĐỀ NGÀY ===
+=======
+// === HÀM SỐ 1: TIÊU ĐỀ NGÀY (Không đổi) ===
+>>>>>>> main
 @Composable
 fun TransactionGroupHeader(date: String, day: String) {
     Row(
@@ -49,12 +61,17 @@ fun TransactionGroupHeader(date: String, day: String) {
     }
 }
 
+<<<<<<< HEAD
 // === HÀM SỐ 2: HÀNG GIAO DỊCH ===
+=======
+// === HÀM SỐ 2: HÀNG GIAO DỊCH (Đã bọc trong "Box") ===
+>>>>>>> main
 @Composable
 fun TransactionItemRow(transaction: Transaction) {
     val amountColor = if (transaction.loai == "thu") IncomeGreen else ExpenseRed
     val prefix = if (transaction.loai == "thu") "+" else "-"
     val formattedAmount = String.format(Locale.GERMAN, "%,.0f", transaction.soTien)
+<<<<<<< HEAD
     val timeStr = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(transaction.ngayTao)
 
     Surface(
@@ -63,11 +80,26 @@ fun TransactionItemRow(transaction: Transaction) {
             .padding(vertical = 4.dp),
         color = TextLight.copy(alpha = 0.1f),
         shape = RoundedCornerShape(12.dp)
+=======
+    val timeStr = SimpleDateFormat("HH:mm:ss", Locale("vi", "VN")).format(transaction.ngayTao)
+
+    // === THAY ĐỔI: BỌC TRONG SURFACE (Box) ===
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp), // Thêm khoảng cách giữa các thẻ
+        color = TextLight.copy(alpha = 0.1f), // Màu nền của thẻ (box)
+        shape = RoundedCornerShape(12.dp) // Bo góc
+>>>>>>> main
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+<<<<<<< HEAD
                 .padding(horizontal = 12.dp, vertical = 16.dp),
+=======
+                .padding(horizontal = 12.dp, vertical = 16.dp), // Padding bên trong thẻ
+>>>>>>> main
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -82,6 +114,7 @@ fun TransactionItemRow(transaction: Transaction) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
+<<<<<<< HEAD
                 // 1. Tên Nhóm (Đa ngôn ngữ)
                 Text(
                     text = getLocalizedCategoryName(transaction.nhom),
@@ -103,6 +136,12 @@ fun TransactionItemRow(transaction: Transaction) {
                         fontSize = 16.sp,
                         color = TextLight.copy(alpha = 0.7f)
                     )
+=======
+                Text(text = transaction.nhom, fontSize = 20.sp,fontWeight = FontWeight.Bold, color = TextLight)
+                Text(text = transaction.tenGiaoDich,color = TextLight.copy(alpha = 0.8f))
+                if (transaction.ghiChu.isNotBlank()) {
+                    Text(text = "Ghi chú: ${transaction.ghiChu}", fontSize = 16.sp, color = TextLight.copy(alpha = 0.7f))
+>>>>>>> main
                 }
             }
             Column(horizontalAlignment = Alignment.End) {
@@ -113,13 +152,18 @@ fun TransactionItemRow(transaction: Transaction) {
                     fontSize = 16.sp
                 )
                 Text(
+<<<<<<< HEAD
                     text = "${stringResource(R.string.time_label)} $timeStr",
+=======
+                    text = "Giờ: $timeStr",
+>>>>>>> main
                     fontSize = 16.sp,
                     color = TextLight.copy(alpha = 0.8f)
                 )
             }
         }
     }
+<<<<<<< HEAD
 }
 
 // === HÀM SỐ 3: LẤY ICON ===
@@ -200,4 +244,25 @@ fun getScopeNameResId(rawName: String): Int {
         "Bạn bè", "Friends" -> R.string.scope_friends
         else -> 0
     }
+=======
+    // ===================================
+}
+
+// === HÀM SỐ 3: LẤY ICON (Không đổi) ===
+@Composable
+fun getIconForCategory(category: String): Painter {
+    return when (category) {
+        "Ăn uống", "Thực phẩm" -> painterResource(R.drawable.eatdrink)
+        "Du lịch" -> painterResource(R.drawable.dulich)
+        "Tiền lương" -> painterResource(R.drawable.tienluong)
+        "Thú cưng" -> painterResource(R.drawable.thucung)
+        "Hóa đơn nước" -> painterResource(R.drawable.hoadonnuoc)
+        "Hóa đơn điện" -> painterResource(R.drawable.hoadondien)
+        "Sức khỏe" -> painterResource(R.drawable.suckhoe)
+        "Giải trí" -> painterResource(R.drawable.giaitri)
+        "Mua sắm" -> painterResource(R.drawable.muasam)
+        "Di chuyển" -> painterResource(R.drawable.dichuyen)
+        else -> painterResource(R.drawable.avt)
+    }
+>>>>>>> main
 }

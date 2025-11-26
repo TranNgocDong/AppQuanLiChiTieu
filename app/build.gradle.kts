@@ -68,9 +68,17 @@ dependencies {
     implementation("co.yml:ycharts:2.1.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+<<<<<<< HEAD
     implementation("com.google.accompanist:accompanist-insets:0.31.5-beta")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.5-beta")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
 }
+=======
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+    implementation("androidx.navigation:navigation-compose:2.7.2") // hoặc phiên bản mới nhất
+    implementation("androidx.compose.animation:animation:1.6.0")
+
+}
+>>>>>>> main
