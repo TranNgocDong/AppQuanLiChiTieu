@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.project_mbp.ui.screens.ForgotPassword_Screen
 import com.example.project_mbp.ui.screens.Login_Screen
 import com.example.project_mbp.ui.screens.Register_Screen
 import com.example.project_mbp.viewmodel.ThemeViewModel
@@ -67,6 +68,11 @@ fun Login_Navigation(
             )
         }
         composable("register") {Register_Screen(vm = vm, navController, googleSignInClient = googleSignInClient)  }
-
+        composable("forgot_password") {
+            ForgotPassword_Screen(
+                vm = vm,
+                navController = navController
+            )
+        }
     }
 }

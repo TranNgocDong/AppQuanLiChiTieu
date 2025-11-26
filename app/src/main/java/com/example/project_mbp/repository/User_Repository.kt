@@ -1,15 +1,45 @@
 package com.example.project_mbp.repository
 
+import android.net.Uri
+import android.util.Log
 import com.example.project_mbp.model.User
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 class User_Repository {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
+    suspend fun loginWithFacebook(accessToken: String): User? {
+        val credential = FacebookAuthProvider.getCredential(accessToken)
+        val result = auth.signInWithCredential(credential).await()
+        val firebaseUser = result.user ?: return null
+
+        val uid = firebaseUser.uid
+        val userDoc = db.collection("users").document(uid).get().await()
+
+        val user = if (userDoc.exists()) {
+            // Lấy thông tin User đã lưu
+            userDoc.toObject(User::class.java)
+        } else {
+            // Tạo User mới và lưu vào Firestore
+            val newUser = User(
+                uid = uid,
+                email = firebaseUser.email ?: "facebook_${uid}@temp.com", // Facebook có thể không trả về email
+                name = firebaseUser.displayName ?: "",
+                avatarUrl = firebaseUser.photoUrl?.toString()
+            )
+            db.collection("users").document(uid).set(newUser).await()
+            newUser
+        }
+
+        return user
+    }
     // Đăng nhập bằng Google
     suspend fun loginWithGoogle(idToken: String): User? {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -148,9 +178,17 @@ class User_Repository {
     // Cập nhật thông tin user
     suspend fun updateUserInfo(uid: String, updatedUser: User): Boolean {
         return try {
-            db.collection("users").document(uid).set(updatedUser).await()
+            // SỬA: Dùng SetOptions.merge()
+            // Tác dụng: Nếu User chưa có -> Tạo mới. Nếu có rồi -> Chỉ cập nhật trường thay đổi.
+            db.collection("users").document(uid)
+                .set(updatedUser, SetOptions.merge())
+                .await()
+
+            Log.d("Repository", "Update thành công cho UID: $uid")
             true
         } catch (e: Exception) {
+            // QUAN TRỌNG: In lỗi ra Logcat để bạn biết tại sao sai
+            Log.e("Repository", "Lỗi updateUserInfo: ${e.message}")
             e.printStackTrace()
             false
         }
@@ -163,6 +201,43 @@ class User_Repository {
             snapshot.toObject(User::class.java)
         } catch (e: Exception) {
             null
+        }
+    }
+    suspend fun updateFirebaseProfile(name: String?, photoUrl: String?): Boolean {
+        val user = auth.currentUser ?: return false
+
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .apply {
+                if (name != null) setDisplayName(name)
+                if (photoUrl != null) setPhotoUri(Uri.parse(photoUrl))
+            }
+            .build()
+
+        return try {
+            user.updateProfile(profileUpdates).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+    suspend fun sendPasswordResetEmail(email: String): Boolean {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+    suspend fun updatePassword(newPassword: String): Boolean {
+        val user = auth.currentUser ?: return false
+        return try {
+            user.updatePassword(newPassword).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 }

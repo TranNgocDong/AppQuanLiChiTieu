@@ -1,14 +1,25 @@
 package com.example.project_mbp.viewmodel
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Base64
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.project_mbp.R
 import com.example.project_mbp.model.User
 import com.example.project_mbp.repository.User_Repository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 class User_ViewModel : ViewModel() {
 
@@ -20,84 +31,107 @@ class User_ViewModel : ViewModel() {
     private val _isLogined = MutableStateFlow(false)
     val isLogined = _isLogined.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
+    private val _message = MutableStateFlow<Int?>(null)
     val message = _message.asStateFlow()
 
-    // trạng thái chờ xác minh (sau khi nhấn Đăng Ký)
     private val _isAwaitingVerification = MutableStateFlow(false)
     val isAwaitingVerification = _isAwaitingVerification.asStateFlow()
 
-    // giây còn lại trong countdown (60..0)
     private val _verificationSeconds = MutableStateFlow(0)
     val verificationSeconds = _verificationSeconds.asStateFlow()
 
-    // internal
     private var pendingUser: User? = null
     private var verificationJob: Job? = null
 
+    // Đã xóa biến storageRef vì không dùng nữa
 
-    // ---------------- GOOGLE LOGIN ----------------
-    fun loginWithGoogle(idToken: String) {
-        if (idToken.isBlank()) {
-            _message.value = "Token Google null!"
+    var isUploading by mutableStateOf(false)
+
+    fun setMessage(resId: Int) {
+        _message.value = resId
+    }
+
+    fun clearMessage() {
+        _message.value = null
+    }
+
+    // ---------------- CÁC HÀM LOGIN/REGISTER GIỮ NGUYÊN ----------------
+    fun loginWithFacebook(accessToken: String) {
+        if (accessToken.isBlank()) {
+            setMessage(R.string.error_facebook_token_null)
             return
         }
+        viewModelScope.launch {
+            try {
+                val user = repository.loginWithFacebook(accessToken)
+                if (user != null) {
+                    val fullUser = repository.getUserByUid(user.uid)
+                    _currentUser.value = fullUser ?: user
+                    _isLogined.value = true
+                    setMessage(R.string.login_success)
+                } else {
+                    setMessage(R.string.error_facebook_login_failed)
+                }
+            } catch (e: Exception) {
+                setMessage(R.string.error_facebook_unknown)
+            }
+        }
+    }
 
+    fun loginWithGoogle(idToken: String) {
+        if (idToken.isBlank()) {
+            setMessage(R.string.error_google_token_null)
+            return
+        }
         viewModelScope.launch {
             try {
                 val user = repository.loginWithGoogle(idToken)
                 if (user != null) {
                     _currentUser.value = user
                     _isLogined.value = true
-                    _message.value = "Đăng nhập thành công!"
+                    setMessage(R.string.login_success)
                 } else {
-                    _message.value = "Đăng nhập thất bại!"
+                    setMessage(R.string.error_login_generic)
                 }
             } catch (e: Exception) {
-                _message.value = "Lỗi đăng nhập Google: ${e.message}"
+                setMessage(R.string.error_google_unknown)
             }
         }
     }
 
-
-    // ---------------- EMAIL LOGIN ----------------
     fun loginWithEmail(email: String, password: String) {
         viewModelScope.launch {
             when {
                 email.isBlank() -> {
-                    _message.value = "Vui lòng nhập Email!"
+                    setMessage(R.string.error_empty_email)
                     return@launch
                 }
-
                 password.isBlank() -> {
-                    _message.value = "Vui lòng nhập mật khẩu!"
+                    setMessage(R.string.error_empty_password)
                     return@launch
                 }
-
                 !email.contains("@") -> {
-                    _message.value = "Email không hợp lệ!"
+                    setMessage(R.string.invalid_email)
                     return@launch
                 }
             }
-
             try {
                 val user = repository.loginWithEmail(email, password)
                 if (user != null) {
                     val fullUser = repository.getUserByUid(user.uid)
                     _currentUser.value = fullUser ?: user
                     _isLogined.value = true
-                    _message.value = "Đăng nhập thành công!"
+                    setMessage(R.string.login_success)
                 } else {
-                    _message.value = "Email hoặc mật khẩu không đúng!"
+                    setMessage(R.string.error_wrong_email_or_password)
                 }
             } catch (e: Exception) {
-                _message.value = "Lỗi đăng nhập: ${e.message}"
+                setMessage(R.string.error_wrong_email_or_password)
             }
         }
     }
 
 
-    // ---------------- CHECK LOGIN STATUS ----------------
     fun checkLoginStatus() {
         viewModelScope.launch {
             val user = repository.getCurrentUser()
@@ -111,73 +145,56 @@ class User_ViewModel : ViewModel() {
         }
     }
 
-
-    // ---------------- LOGOUT ----------------
     fun logout() {
         viewModelScope.launch {
             repository.logout()
             _isLogined.value = false
             _currentUser.value = null
-            _message.value = "Đã đăng xuất!"
+            setMessage(R.string.logout_success)
             stopVerificationWatcher()
         }
     }
 
-
-    // ---------------- MESSAGE CONTROL ----------------
-    fun setMessage(mess: String) {
-        _message.value = mess
-    }
-
-    fun clearMessage() {
-        _message.value = null
-    }
-
-
-    // ---------------- REGISTER + EMAIL VERIFY ----------------
     fun registerWithEmail(email: String, password1: String, password2: String, name: String) {
         viewModelScope.launch {
             when {
                 email.isBlank() -> {
-                    _message.value = "Vui lòng nhập email!"
+                    setMessage(R.string.enter_email)
                     return@launch
                 }
                 password1.isBlank() -> {
-                    _message.value = "Vui lòng nhập mật khẩu!"
+                    setMessage(R.string.enter_password)
                     return@launch
                 }
                 password2.isBlank() -> {
-                    _message.value = "Vui lòng xác nhận mật khẩu!"
+                    setMessage(R.string.error_confirm_password)
                     return@launch
                 }
                 password1 != password2 -> {
-                    _message.value = "Mật khẩu xác nhận không trùng khớp!"
+                    setMessage(R.string.error_password_not_match)
                     return@launch
                 }
-                !email.contains("@gmail.com") -> {
-                    _message.value = "Email không hợp lệ!"
+                !email.contains("@") -> {
+                    setMessage(R.string.invalid_email)
                     return@launch
                 }
             }
-
             try {
                 val uid = repository.registerWithEmail_returnUid(email, password1, name)
                 if (uid != null) {
                     pendingUser = User(uid = uid, email = email, name = name)
                     _isAwaitingVerification.value = true
                     _verificationSeconds.value = 60
-
                     startVerificationWatcher()
-                    _message.value = "Đã gửi email xác minh. Vui lòng mở mail để xác nhận."
+                    setMessage(R.string.verify_email_sent)
                 } else {
-                    _message.value = "Đăng ký thất bại!"
+                    setMessage(R.string.register_failed)
                 }
             } catch (e: Exception) {
-                _message.value = "Lỗi đăng ký: ${e.message}"
+                setMessage(R.string.error_register_generic)
             }
         }
     }
-
 
     private fun startVerificationWatcher() {
         stopVerificationWatcher()
@@ -188,37 +205,29 @@ class User_ViewModel : ViewModel() {
                     val user = pendingUser
                     if (user != null) {
                         val saved = repository.saveUserToFirestore(user.uid, user.email, user.name)
-                        if (saved) {
-                            _message.value = "Xác minh thành công! Bạn có thể đăng nhập."
-                        } else {
-                            _message.value = "Xác minh thành công nhưng lưu dữ liệu thất bại."
-                        }
+                        if (saved) setMessage(R.string.verify_success)
+                        else setMessage(R.string.verify_save_failed)
                     } else {
-                        _message.value = "Xác minh thành công!"
+                        setMessage(R.string.verify_success)
                     }
-
                     repository.logout()
                     _isAwaitingVerification.value = false
                     _verificationSeconds.value = 0
                     pendingUser = null
                     return@launch
                 }
-
                 delay(1000L)
                 _verificationSeconds.value = (_verificationSeconds.value - 1).coerceAtLeast(0)
             }
-
             _isAwaitingVerification.value = true
-            _message.value = "Chưa xác minh. Bạn có thể gửi lại email xác minh."
+            setMessage(R.string.verify_not_completed)
         }
     }
-
 
     private fun stopVerificationWatcher() {
         verificationJob?.cancel()
         verificationJob = null
     }
-
 
     fun checkEmailVerificationNow() {
         viewModelScope.launch {
@@ -227,13 +236,10 @@ class User_ViewModel : ViewModel() {
                 val user = pendingUser
                 if (user != null) {
                     val saved = repository.saveUserToFirestore(user.uid, user.email, user.name)
-                    if (saved) {
-                        _message.value = "Xác minh thành công!"
-                    } else {
-                        _message.value = "Xác minh thành công nhưng lưu dữ liệu thất bại."
-                    }
+                    if (saved) setMessage(R.string.verify_success)
+                    else setMessage(R.string.verify_save_failed)
                 } else {
-                    _message.value = "Xác minh thành công!"
+                    setMessage(R.string.verify_success)
                 }
                 repository.logout()
                 _isAwaitingVerification.value = false
@@ -241,35 +247,147 @@ class User_ViewModel : ViewModel() {
                 pendingUser = null
                 stopVerificationWatcher()
             } else {
-                _message.value = "Chưa xác minh. Vui lòng kiểm tra email."
+                setMessage(R.string.verify_not_completed)
             }
         }
     }
-
 
     fun resendVerificationEmail() {
         viewModelScope.launch {
             val ok = repository.resendVerificationEmail()
             if (ok) {
-                _message.value = "Đã gửi lại email xác minh."
+                setMessage(R.string.verify_sent_again)
                 _verificationSeconds.value = 60
                 startVerificationWatcher()
             } else {
-                _message.value = "Gửi lại email xác minh thất bại."
+                setMessage(R.string.verify_resend_failed)
             }
         }
     }
 
-
-    // ---------------- UPDATE USER ----------------
     fun updateUserInfo(updatedUser: User) {
         viewModelScope.launch {
             val success = repository.updateUserInfo(updatedUser.uid, updatedUser)
             if (success) {
                 _currentUser.value = updatedUser
-                _message.value = "Cập nhật thông tin thành công!"
+                setMessage(R.string.update_success)
             } else {
-                _message.value = "Lỗi cập nhật thông tin!"
+                setMessage(R.string.update_failed)
+            }
+        }
+    }
+
+    // ================== PHẦN THAY ĐỔI QUAN TRỌNG ==================
+
+    // 1. Hàm chuyển ảnh URI thành Base64 String (Đã nén nhỏ)
+    // Trong User_ViewModel.kt
+
+    // Trong User_ViewModel.kt
+
+    private fun uriToBase64(context: Context, uri: Uri): String? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val bitmap = BitmapFactory.decodeStream(inputStream) ?: return null
+
+            // 1. GIẢM XUỐNG 512x512
+            // 1024 quá rủi ro cho Firestore (dễ bị vượt quá 1MB). 512 là quá đủ nét cho Avatar điện thoại.
+            val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1024, true)
+
+            val outputStream = ByteArrayOutputStream()
+
+            // Nén 70% cho nét
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+            val byteArray = outputStream.toByteArray()
+
+            // 2. QUAN TRỌNG NHẤT: Đổi Base64.DEFAULT thành Base64.NO_WRAP
+            // DEFAULT sẽ thêm dấu xuống dòng làm hỏng đường dẫn ảnh
+            "data:image/jpeg;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    // 2. Hàm lưu ảnh (Base64) thẳng vào Firestore (KHÔNG DÙNG STORAGE)
+    fun saveAvatarToFirestore(context: Context, uri: Uri) {
+        val user = currentUser.value ?: return
+        isUploading = true
+
+        // Chạy trên luồng IO để xử lý ảnh nặng
+        viewModelScope.launch(Dispatchers.IO) {
+            val base64Image = uriToBase64(context, uri)
+
+            if (base64Image == null) {
+                isUploading = false
+                launch(Dispatchers.Main) { setMessage(R.string.update_failed) }
+                return@launch
+            }
+
+            // Tạo user mới với chuỗi ảnh base64
+            val updatedUser = user.copy(avatarUrl = base64Image)
+
+            // Lưu vào Firestore
+            val success = repository.updateUserInfo(updatedUser.uid, updatedUser)
+
+            isUploading = false
+
+            // Cập nhật UI trên luồng chính
+            launch(Dispatchers.Main) {
+                if (success) {
+                    _currentUser.value = updatedUser
+                    setMessage(R.string.upload_success)
+                } else {
+                    setMessage(R.string.update_failed)
+                }
+            }
+        }
+    }
+    fun sendPasswordReset(email: String) {
+        viewModelScope.launch {
+            if (email.isBlank() || !email.contains("@")) {
+                setMessage(R.string.invalid_email) // Bạn cần thêm string này
+                return@launch
+            }
+
+            try {
+                val success = repository.sendPasswordResetEmail(email)
+                if (success) {
+                    // Đăng xuất ngay lập tức sau khi gửi email thành công
+                    repository.logout()
+                    _isLogined.value = false
+                    _currentUser.value = null
+
+                    setMessage(R.string.password_reset_sent) // Bạn cần thêm string này
+                } else {
+                    setMessage(R.string.error_reset_password_failed) // Bạn cần thêm string này
+                }
+            } catch (e: Exception) {
+                setMessage(R.string.error_reset_password_failed)
+            }
+        }
+    }
+    fun updatePassword(newPassword: String, confirmPassword: String) {
+        viewModelScope.launch {
+            when {
+                newPassword.isBlank() || confirmPassword.isBlank() -> {
+                    setMessage(R.string.error_empty_password)
+                    return@launch
+                }
+                newPassword != confirmPassword -> {
+                    setMessage(R.string.error_password_not_match)
+                    return@launch
+                }
+                // Thêm kiểm tra độ dài mật khẩu nếu cần
+            }
+
+            val success = repository.updatePassword(newPassword)
+            if (success) {
+                setMessage(R.string.password_update_success) // Cần thêm chuỗi này
+            } else {
+                // Lưu ý: Firebase có thể yêu cầu người dùng đăng nhập lại (re-authenticate) trước khi đổi mật khẩu
+                setMessage(R.string.password_update_failed) // Cần thêm chuỗi này
             }
         }
     }

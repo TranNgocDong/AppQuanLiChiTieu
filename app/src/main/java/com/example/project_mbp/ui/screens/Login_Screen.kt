@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -48,7 +49,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+<<<<<<< HEAD
+import com.example.project_mbp.animations.Animations
+import com.example.project_mbp.animations.Animations.scaleClickAnimation
+=======
 import com.example.project_mbp.animations.scaleClickAnimation
+>>>>>>> main
 import com.example.project_mbp.ui.components.TextField_Custom
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -56,6 +62,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
 
 @Composable
 fun Login_Screen(
@@ -77,6 +87,10 @@ fun Login_Screen(
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
 
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()//
+
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -89,12 +103,12 @@ fun Login_Screen(
                 vm.loginWithGoogle(idToken)
             } ?: run {
                 vm.clearMessage()
-                vm.setMessage("Đăng nhập Google thất bại: idToken null")
+                vm.setMessage(R.string.error_google_token_null)
             }
         } catch (e: Exception) {
             Log.e("Login_Screen", "Google sign-in failed", e)
             vm.clearMessage()
-            vm.setMessage("Đăng nhập Google thất bại")
+            vm.setMessage(R.string.error_google_signin)
         }
     }
 
@@ -136,7 +150,7 @@ fun Login_Screen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Đăng Nhập",
+                            text = stringResource(R.string.login_title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -144,18 +158,38 @@ fun Login_Screen(
                         Spacer(Modifier.height(28.dp))
                         TextField_Custom("Email", email, onChange = { email = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom("Mật khẩu", password, onChange = { password = it })
+                        TextField_Custom(stringResource(R.string.password_hint), password, onChange = { password = it })
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 12.dp, top = 4.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = stringResource(R.string.forgot_password),
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate("forgot_password")
+                                    },
+                                color = Color(0xFF21817B),
+                                textDecoration = TextDecoration.Underline,
+                                fontSize = 16.sp
+                            )
+                        }
                     }
                 }
 
-                Spacer(Modifier.height(28.dp))
+                // Khoảng cách này được giảm đi 1 phần do Row "Quên mật khẩu" vừa được thêm
+                Spacer(Modifier.height(16.dp))
+
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                         if (mess != null) {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = mess!!,
+                                text = stringResource(id = mess!!),
                                 color = Color.Red,
                                 fontSize = 16.sp,
                                 textAlign = TextAlign.Center,
@@ -180,14 +214,18 @@ fun Login_Screen(
                             modifier = Modifier
                                 .fillMaxWidth(0.9f)
                                 .height(56.dp)
+<<<<<<< HEAD
+                                .scale(scale.value),
+=======
                                 .scale(scale.value), // Áp dụng hiệu ứng phóng to/thu nhỏ
+>>>>>>> main
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFF36435)
                             ),
                             shape = RoundedCornerShape(15.dp)
                         ) {
                             Text(
-                                text = "Đăng Nhập",
+                                text = stringResource(R.string.login_button),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -199,7 +237,7 @@ fun Login_Screen(
                             thickness = 2.dp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        Text(text = "Hoặc", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text(text = stringResource(R.string.or), fontSize = 16.sp, fontWeight = FontWeight.Medium)
                         Spacer(Modifier.height(4.dp))
 
                         Row(
@@ -218,7 +256,7 @@ fun Login_Screen(
                                             val signInIntent = googleSignInClient.signInIntent
                                             launcher.launch(signInIntent)
                                         } ?: run {
-                                            vm.setMessage("GoogleSignInClient chưa được cấu hình.")
+                                            vm.setMessage(R.string.error_config_client)
                                         }
                                     }
                             )
@@ -232,9 +270,9 @@ fun Login_Screen(
 
                         Spacer(Modifier.height(16.dp))
                         Row {
-                            Text("Bạn chưa có tài khoản? ")
+                            Text(stringResource(R.string.no_account))
                             Text(
-                                "Đăng Ký",
+                                stringResource(R.string.register_link),
                                 modifier = Modifier
                                     .clickable {
                                         navController.navigate("register")
@@ -246,6 +284,13 @@ fun Login_Screen(
                     }
                 }
             }
+<<<<<<< HEAD
+        } // main box
+    } // main column
+
+}
+=======
         }
     }
 }
+>>>>>>> main

@@ -1,15 +1,24 @@
 package com.example.project_mbp.ui.screens
 
+<<<<<<< HEAD
+import android.widget.Toast
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+=======
 import android.R.attr.fontStyle
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.Spring
+>>>>>>> main
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+<<<<<<< HEAD
+import androidx.compose.foundation.layout.*
+=======
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,10 +31,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+>>>>>>> main
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+<<<<<<< HEAD
+import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+=======
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,6 +83,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+>>>>>>> main
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -68,12 +91,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+<<<<<<< HEAD
+import com.example.project_mbp.ui.theme.ExpenseRed
+import com.example.project_mbp.ui.theme.IncomeGreen
+=======
 // Bỏ các import màu cố định
 // import com.example.project_mbp.ui.theme.ButtonBlue
 // import com.example.project_mbp.ui.theme.ButtonRed
 // import com.example.project_mbp.ui.theme.SelectedYellow
 // import com.example.project_mbp.ui.theme.TealBackground
 // import com.example.project_mbp.ui.theme.TextLight
+>>>>>>> main
 import com.example.project_mbp.viewmodel.Transaction_ViewModel
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
@@ -81,6 +109,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+<<<<<<< HEAD
+=======
 // Danh sách các nhóm (Giữ nguyên)
 val transactionCategories = listOf(
     "Ăn uống", "Du lịch", "Tiền lương", "Thú cưng", "Hóa đơn nước",
@@ -92,6 +122,7 @@ val incomeCategories = listOf("Tiền lương", "Thưởng", "Thu nhập khác",
 
 val scopeCategories = listOf("Bản thân", "Gia đình", "Bạn bè")
 
+>>>>>>> main
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GiaoDichMoiScreen(
@@ -100,8 +131,24 @@ fun GiaoDichMoiScreen(
 ) {
     val context = LocalContext.current
 
+<<<<<<< HEAD
+    // Lấy dữ liệu từ file Categories.kt (Không định nghĩa lại ở đây nữa)
+    val expenseCats = getExpenseCategories()
+    val incomeCats = getIncomeCategories()
+    val scopeCats = getScopeCategories()
+
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val tabs = listOf(stringResource(R.string.expense), stringResource(R.string.income))
+    val selectedType = if (selectedTabIndex == 0) "chi" else "thu"
+    val selectedColor = if (selectedType == "chi") ExpenseRed else IncomeGreen
+    val currentCategoryList = if (selectedType == "chi") expenseCats else incomeCats
+
+    var nhomGiaoDich by remember(currentCategoryList) { mutableStateOf(currentCategoryList.firstOrNull() ?: "") }
+    var chiCho by remember(scopeCats) { mutableStateOf(scopeCats.firstOrNull() ?: "") }
+=======
     var nhomGiaoDich by remember { mutableStateOf(transactionCategories[0]) }
     var chiCho by remember { mutableStateOf(scopeCategories[0]) }
+>>>>>>> main
     var soTien by remember { mutableStateOf("") }
     var ghiChu by remember { mutableStateOf("") }
 
@@ -151,22 +198,74 @@ fun GiaoDichMoiScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
+<<<<<<< HEAD
+                            text = stringResource(R.string.add_transaction_title),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 30.sp,
+=======
                             "Thêm giao dịch mới",
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 34.sp,
+>>>>>>> main
                             fontWeight = FontWeight.Bold,
                         )
                     }
                 },
+<<<<<<< HEAD
+                windowInsets = WindowInsets(10.dp),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+            )
+=======
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
 
+>>>>>>> main
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+<<<<<<< HEAD
+                .navigationBarsPadding()
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = selectedColor,
+                        height = 3.dp
+                    )
+                }
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = {
+                            Text(
+                                text = title,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 26.sp,
+                                color = if (selectedTabIndex == index) selectedColor else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                            )
+                        }
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = stringResource(R.string.category_group), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                CategoryDropdownMenu(
+                    label = "",
+                    options = currentCategoryList,
+=======
                 .verticalScroll(rememberScrollState())
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -175,6 +274,7 @@ fun GiaoDichMoiScreen(
                 CategoryDropdownMenu(
                     label = "",
                     options = transactionCategories,
+>>>>>>> main
                     selectedOption = nhomGiaoDich,
                     onOptionSelected = { nhomGiaoDich = it },
                     leadingIcon = {
@@ -187,30 +287,52 @@ fun GiaoDichMoiScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
+<<<<<<< HEAD
+                Text(text = stringResource(R.string.scope), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                CategoryDropdownMenu(
+                    label = "",
+                    options = scopeCats,
+=======
                 // Dropdown "Chi cho"
                 Text(text = "Chi tiêu cho: ", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 CategoryDropdownMenu(
                     label = "",
                     options = scopeCategories,
+>>>>>>> main
                     selectedOption = chiCho,
                     onOptionSelected = { chiCho = it },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = R.drawable.iconloaichitieu),
+<<<<<<< HEAD
+                            contentDescription = "Phạm vi",
+=======
                             contentDescription = "Chi cho",
+>>>>>>> main
                             modifier = Modifier.size(40.dp),
                         )
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
+<<<<<<< HEAD
+                val amountLabel = if (selectedType == "chi") stringResource(R.string.amount_expense_label) else stringResource(R.string.amount_income_label)
+                val amountPlaceholder = if (selectedType == "chi") stringResource(R.string.placeholder_expense) else stringResource(R.string.placeholder_income)
+
+                Text(text = amountLabel, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+=======
                 // Số tiền
                 Text(text = "Số tiền chi tiêu: ", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+>>>>>>> main
                 FormTextField(
                     value = soTien,
                     label = "",
                     onValueChange = { soTien = it },
+<<<<<<< HEAD
+                    placeholder = amountPlaceholder,
+=======
                     placeholder = "Nhập số tiền chi tiêu",
+>>>>>>> main
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     leadingIcon = {
                         Image(
@@ -221,8 +343,12 @@ fun GiaoDichMoiScreen(
                     }
                 )
 
+<<<<<<< HEAD
+                Text(text = stringResource(R.string.date_label), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+=======
                 // DatePickerField
                 Text(text = "Ngày, tháng, năm:", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+>>>>>>> main
                 DatePickerField(
                     label = "",
                     selectedDate = selectedDate,
@@ -236,8 +362,12 @@ fun GiaoDichMoiScreen(
                     }
                 )
 
+<<<<<<< HEAD
+                Text(text = stringResource(R.string.time_label), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+=======
                 // TimePickerField
                 Text(text = "Giờ:", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+>>>>>>> main
                 TimePickerField(
                     label = "",
                     selectedTime = selectedTime,
@@ -251,6 +381,29 @@ fun GiaoDichMoiScreen(
                     }
                 )
 
+<<<<<<< HEAD
+                Text(text = stringResource(R.string.note_label), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                FormTextField(
+                    value = ghiChu,
+                    onValueChange = { ghiChu = it },
+                    placeholder = stringResource(R.string.note_placeholder),
+                    leadingIcon = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.note),
+                                contentDescription = "Ghi chú",
+                                modifier = Modifier.size(45.dp)
+                            )
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.height(100.dp)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+
+=======
                 // Ghi chú
                 Text(text = "Ghi chú: ", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 FormTextField(
@@ -272,6 +425,7 @@ fun GiaoDichMoiScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Logic animation cho nút (Giữ nguyên)
+>>>>>>> main
                 val interactionSourceHuy = remember { MutableInteractionSource() }
                 val isPressedHuy by interactionSourceHuy.collectIsPressedAsState()
                 val scaleHuy by animateFloatAsState(
@@ -294,7 +448,10 @@ fun GiaoDichMoiScreen(
                     )
                 )
 
+<<<<<<< HEAD
+=======
                 // Nút bấm
+>>>>>>> main
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -310,12 +467,22 @@ fun GiaoDichMoiScreen(
                             },
                         interactionSource = interactionSourceHuy
                     ) {
+<<<<<<< HEAD
+                        Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onError, fontSize = 16.sp)
+=======
                         Text("HỦY", color = MaterialTheme.colorScheme.onError, fontSize = 16.sp)
+>>>>>>> main
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Button(
                         onClick = {
                             if (soTien.isBlank()) {
+<<<<<<< HEAD
+                                Toast.makeText(context, context.getString(R.string.error_empty_amount), Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
+=======
                                 Toast.makeText(context, "Vui lòng nhập số tiền!", Toast.LENGTH_SHORT).show()
                                 return@Button
                             }
@@ -328,13 +495,18 @@ fun GiaoDichMoiScreen(
                             }
                             // ========================
 
+>>>>>>> main
                             isLoading = true
                             transactionViewModel.addTransaction(
                                 ten = chiCho,
                                 soTien = soTien,
                                 nhom = nhomGiaoDich,
                                 ghiChu = ghiChu,
+<<<<<<< HEAD
+                                loai = selectedType,
+=======
                                 loai = transactionType, // Truyền loại giao dịch đã xác định
+>>>>>>> main
                                 ngay = selectedDate,
                                 gio = selectedTime
                             )
@@ -354,7 +526,11 @@ fun GiaoDichMoiScreen(
                             color = MaterialTheme.colorScheme.onPrimary,
                             strokeWidth = 2.dp
                         )
+<<<<<<< HEAD
+                        else Text(stringResource(R.string.save), color = MaterialTheme.colorScheme.onPrimary, fontSize = 16.sp)
+=======
                         else Text("LƯU", color = MaterialTheme.colorScheme.onPrimary, fontSize = 16.sp)
+>>>>>>> main
                     }
                 }
             }
@@ -372,7 +548,10 @@ fun CategoryDropdownMenu(
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
+<<<<<<< HEAD
+=======
     // SỬA: Lấy màu từ theme
+>>>>>>> main
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
     ExposedDropdownMenuBox(
@@ -384,11 +563,17 @@ fun CategoryDropdownMenu(
             value = selectedOption,
             onValueChange = {},
             readOnly = true,
+<<<<<<< HEAD
+            label = { Text(label, color = onBackgroundColor.copy(alpha = 0.7f), fontSize = 24.sp) },
+            leadingIcon = leadingIcon,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+=======
             // SỬA: Dùng onBackgroundColor
             label = { Text(label, color = onBackgroundColor.copy(alpha = 0.7f), fontSize = 24.sp) },
             leadingIcon = leadingIcon,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             textStyle = TextStyle(fontSize = 18.sp, color = onBackgroundColor),
             colors = OutlinedTextFieldDefaults.colors(
                 disabledTextColor = onBackgroundColor,
@@ -407,18 +592,28 @@ fun CategoryDropdownMenu(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+<<<<<<< HEAD
+=======
             // SỬA: Dùng màu surface
+>>>>>>> main
             modifier = Modifier.background(MaterialTheme.colorScheme.surface)
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
+<<<<<<< HEAD
+=======
                     // SỬA: Dùng màu onSurface
+>>>>>>> main
                     text = { Text(option, color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp) },
                     onClick = {
                         onOptionSelected(option)
                         expanded = false
                     },
+<<<<<<< HEAD
+                    modifier = Modifier
+=======
                     modifier = Modifier // Bỏ background cố định
+>>>>>>> main
                 )
             }
         }
@@ -440,7 +635,10 @@ fun FormTextField(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
 ) {
+<<<<<<< HEAD
+=======
     // SỬA: Lấy màu từ theme
+>>>>>>> main
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
     Box(
         contentAlignment = if (verticalCenter) Alignment.Center else Alignment.TopStart
@@ -448,14 +646,20 @@ fun FormTextField(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
+<<<<<<< HEAD
+=======
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             label = if (label.isNotEmpty()) { { Text(label, color = onBackgroundColor.copy(alpha = 0.7f)) } } else null,
             placeholder = if (placeholder.isNotEmpty()) { { Text(placeholder, color = onBackgroundColor.copy(alpha = 0.5f), fontSize = 20.sp) } } else null,
             leadingIcon = leadingIcon,
             keyboardOptions = keyboardOptions,
             readOnly = readOnly,
             singleLine = singleLine,
+<<<<<<< HEAD
+=======
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             textStyle = TextStyle(fontSize = 18.sp, color = onBackgroundColor),
             colors = OutlinedTextFieldDefaults.colors(
                 disabledTextColor = onBackgroundColor,
@@ -472,21 +676,32 @@ fun FormTextField(
     }
 }
 
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> main
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
     label: String,
     selectedDate: String,
+<<<<<<< HEAD
+    onDateSelected: (String) -> Unit,
+    onNowClicked: (String) -> Unit
+=======
     onDateSelected: (String) -> Unit, // Khi nhấn OK
     onNowClicked: (String) -> Unit   // Khi nhấn "Bây giờ"
+>>>>>>> main
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val calendar = remember { Calendar.getInstance() }
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = calendar.timeInMillis)
     val formatterDate = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+<<<<<<< HEAD
+=======
     // SỬA: Lấy màu từ theme
+>>>>>>> main
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
     Box(
@@ -498,7 +713,10 @@ fun DatePickerField(
             value = selectedDate,
             onValueChange = {},
             enabled = false,
+<<<<<<< HEAD
+=======
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             label = { Text(label, color = onBackgroundColor.copy(alpha = 0.7f)) },
             leadingIcon = {
                 Image(
@@ -507,7 +725,10 @@ fun DatePickerField(
                     modifier = Modifier.size(40.dp),
                 )
             },
+<<<<<<< HEAD
+=======
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             textStyle = TextStyle(fontSize = 20.sp, color = onBackgroundColor.copy(alpha = 0.7f)),
             colors = OutlinedTextFieldDefaults.colors(
                 disabledTextColor = onBackgroundColor,
@@ -525,11 +746,30 @@ fun DatePickerField(
     }
 
     if (showDatePicker) {
+<<<<<<< HEAD
+=======
         // DatePickerDialog tự động dùng theme
+>>>>>>> main
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 Row {
+<<<<<<< HEAD
+                    TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.cancel), fontSize = 16.sp) }
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                onDateSelected(formatterDate.format(Date(it)))
+                            }
+                            showDatePicker = false
+                        }) { Text(stringResource(R.string.ok), fontSize = 16.sp) }
+                    TextButton(
+                        onClick = {
+                            val now = Calendar.getInstance()
+                            onNowClicked(formatterDate.format(now.time))
+                            showDatePicker = false
+                        }) { Text(stringResource(R.string.now), color = MaterialTheme.colorScheme.tertiary, fontSize = 16.sp) }
+=======
                     TextButton(onClick = { showDatePicker = false }) { Text("Hủy", fontSize = 16.sp) }
                     TextButton(
                         onClick = {
@@ -544,6 +784,7 @@ fun DatePickerField(
                             onNowClicked(formatterDate.format(now.time)) // Gọi lambda "Bây giờ"
                             showDatePicker = false
                         }) { Text("Bây giờ", color = MaterialTheme.colorScheme.tertiary, fontSize = 16.sp) } // SỬA: Dùng màu theme
+>>>>>>> main
                 }
             }
         ) {
@@ -557,8 +798,13 @@ fun DatePickerField(
 fun TimePickerField(
     label: String,
     selectedTime: String,
+<<<<<<< HEAD
+    onTimeSelected: (String) -> Unit,
+    onNowClicked: (String) -> Unit
+=======
     onTimeSelected: (String) -> Unit, // Khi nhấn OK
     onNowClicked: (String) -> Unit   // Khi nhấn "Bây giờ"
+>>>>>>> main
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
     val calendar = remember { Calendar.getInstance() }
@@ -568,7 +814,10 @@ fun TimePickerField(
         is24Hour = true
     )
     val formatterTime = remember { SimpleDateFormat("HH:mm:ss", Locale.getDefault()) }
+<<<<<<< HEAD
+=======
     // SỬA: Lấy màu từ theme
+>>>>>>> main
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
     Box(
@@ -580,7 +829,10 @@ fun TimePickerField(
             value = selectedTime,
             onValueChange = {},
             enabled = false,
+<<<<<<< HEAD
+=======
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             label = { Text(label, color = onBackgroundColor.copy(alpha = 0.7f)) },
             leadingIcon = {
                 Image(
@@ -589,7 +841,10 @@ fun TimePickerField(
                     modifier = Modifier.size(40.dp),
                 )
             },
+<<<<<<< HEAD
+=======
             // SỬA: Dùng onBackgroundColor
+>>>>>>> main
             textStyle = TextStyle(fontSize = 20.sp, color = onBackgroundColor.copy(alpha = 0.7f)),
             colors = OutlinedTextFieldDefaults.colors(
                 disabledTextColor = onBackgroundColor,
@@ -610,17 +865,35 @@ fun TimePickerField(
         Dialog(onDismissRequest = { showTimePicker = false }) {
             Column(
                 modifier = Modifier
+<<<<<<< HEAD
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+                    .padding(16.dp)
+            ) {
+=======
                     // SỬA: Dùng màu surface
                     .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
                     .padding(16.dp)
             ) {
                 // TimePicker tự động dùng theme
+>>>>>>> main
                 TimePicker(state = timePickerState)
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
+<<<<<<< HEAD
+                    TextButton(onClick = { showTimePicker = false }) { Text(stringResource(R.string.cancel), fontSize = 16.sp) }
+                    TextButton(onClick = {
+                        onTimeSelected(String.format("%02d:%02d:00", timePickerState.hour, timePickerState.minute))
+                        showTimePicker = false
+                    }) { Text(stringResource(R.string.ok), fontSize = 16.sp) }
+                    TextButton(onClick = {
+                        val now = Calendar.getInstance()
+                        onNowClicked(formatterTime.format(now.time))
+                        showTimePicker = false
+                    }) { Text(stringResource(R.string.now), color = MaterialTheme.colorScheme.tertiary, fontSize = 16.sp) }
+=======
                     TextButton(onClick = { showTimePicker = false }) { Text("Hủy", fontSize = 16.sp) }
                     TextButton(onClick = {
                         onTimeSelected(String.format("%02d:%02d:00", timePickerState.hour, timePickerState.minute)) // Gọi lambda OK
@@ -631,6 +904,7 @@ fun TimePickerField(
                         onNowClicked(formatterTime.format(now.time)) // Gọi lambda "Bây giờ"
                         showTimePicker = false
                     }) { Text("Bây giờ", color = MaterialTheme.colorScheme.tertiary, fontSize = 16.sp) } // SỬA: Dùng màu theme
+>>>>>>> main
                 }
             }
         }

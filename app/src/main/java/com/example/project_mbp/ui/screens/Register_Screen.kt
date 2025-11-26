@@ -35,14 +35,22 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+<<<<<<< HEAD
+import androidx.compose.ui.res.stringResource
+=======
 import androidx.compose.ui.text.font.FontWeight
+>>>>>>> main
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.project_mbp.R
+<<<<<<< HEAD
+import com.example.project_mbp.animations.Animations.scaleClickAnimation
+=======
 import com.example.project_mbp.animations.scaleClickAnimation
+>>>>>>> main
 import com.example.project_mbp.ui.components.TextField_Custom
 import com.example.project_mbp.viewmodel.User_ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -63,15 +71,23 @@ fun Register_Screen(
     val context = LocalContext.current
     val activity = context as? Activity
     val mess by vm.message.collectAsState()
+<<<<<<< HEAD
+=======
 
     val scale = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()
 
 
+>>>>>>> main
     // 🟨 THÊM: trạng thái chờ xác minh + countdown
     val awaiting by vm.isAwaitingVerification.collectAsState()
     val secondsLeft by vm.verificationSeconds.collectAsState()
 
+<<<<<<< HEAD
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()//
+=======
+>>>>>>> main
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -84,12 +100,12 @@ fun Register_Screen(
                 vm.loginWithGoogle(idToken)
             } ?: run {
                 vm.clearMessage()
-                vm.setMessage("Đăng nhập Google thất bại: idToken null")
+                vm.setMessage(R.string.error_google_token_null)
             }
         } catch (e: Exception) {
             Log.e("Login_Screen", "Google sign-in failed", e)
             vm.clearMessage()
-            vm.setMessage("Đăng nhập Google thất bại")
+            vm.setMessage(R.string.error_google_signin)
         }
     }
 
@@ -131,29 +147,34 @@ fun Register_Screen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
+<<<<<<< HEAD
+                            text = stringResource(R.string.register_title),
+                            fontSize = 24.sp
+=======
                             text = "Đăng Ký",
 
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
 
+>>>>>>> main
                         )
 
                         Spacer(Modifier.height(28.dp))
-                        TextField_Custom("Nhập email...", email, onChange = { email = it })
+                        TextField_Custom(stringResource(R.string.enter_email_hint), email, onChange = { email = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom("Nhập mật khẩu...", password1, onChange = { password1 = it })
+                        TextField_Custom(stringResource(R.string.enter_password_hint), password1, onChange = { password1 = it })
                         Spacer(Modifier.height(16.dp))
-                        TextField_Custom("Xác Nhận Mật khẩu", password2, onChange = { password2 = it })
+                        TextField_Custom(stringResource(R.string.confirm_password_hint), password2, onChange = { password2 = it })
                     }
                 }
 
-                Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(18.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                         if (mess != null) {
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = mess!!, color = Color.Red, fontSize = 16.sp)
+                            Text(text = stringResource(id = mess!!), color = Color.Red, fontSize = 16.sp)
                             // message auto clear handled in VM callers if needed
                             Spacer(modifier = Modifier.height(12.dp))
                         }
@@ -162,24 +183,33 @@ fun Register_Screen(
                         if (!awaiting) {
                             Button(
                                 onClick = {
+<<<<<<< HEAD
+                                    scope.launch{
+                                        scaleClickAnimation(scale)
+=======
                                     scope.launch {
                                         // Gọi animation khi nhấn nút
                                         scaleClickAnimation(scale)
                                         // Sau khi animation kết thúc → gọi đăng ký
+>>>>>>> main
                                         vm.registerWithEmail(email, password1, password2, "Người dùng")
                                     }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth(0.9f)
                                     .height(56.dp)
+<<<<<<< HEAD
+                                    .scale(scale.value),
+=======
                                     .scale(scale.value), //  Áp dụng scale vào nút,
+>>>>>>> main
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFF36435)
                                 ),
                                 shape = RoundedCornerShape(15.dp)
                             ) {
                                 Text(
-                                    text = "Đăng Ký",
+                                    text = stringResource(R.string.register_button),
                                     fontSize = 20.sp
                                 )
                             }
@@ -187,7 +217,7 @@ fun Register_Screen(
                             // Khi đang chờ xác minh
                             Column(horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
-                                ) {
+                            ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -203,7 +233,7 @@ fun Register_Screen(
                                             .height(48.dp),
                                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
                                     ) {
-                                        Text("Kiểm tra xác minh")
+                                        Text(stringResource(R.string.check_verification))
                                     }
 
                                     if (secondsLeft > 0) {
@@ -223,24 +253,24 @@ fun Register_Screen(
                                             .height(44.dp),
                                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
                                     ) {
-                                        Text("Gửi lại")
+                                        Text(stringResource(R.string.resend))
                                     }
 
                                     Spacer(Modifier.height(8.dp))
-                                    Text("Nếu không nhận được email, kiểm tra hộp thư Spam.", fontSize = 12.sp)
+                                    Text(stringResource(R.string.spam_check_hint), fontSize = 12.sp)
                                 } else {
                                     Spacer(Modifier.height(8.dp))
                                 }
                             }
                         }
 
-                        Spacer(Modifier.height(20.dp))
+                        Spacer(Modifier.height(10.dp))
                         HorizontalDivider(
                             color = Color.Gray,
                             thickness = 2.dp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        Text(text = "Hoặc", fontSize = 16.sp)
+                        Text(text = stringResource(R.string.or), fontSize = 16.sp)
                         Spacer(Modifier.height(4.dp))
 
                         Row(
@@ -259,7 +289,7 @@ fun Register_Screen(
                                             val signInIntent = googleSignInClient.signInIntent
                                             launcher.launch(signInIntent)
                                         } ?: run {
-                                            vm.setMessage("GoogleSignInClient chưa được cấu hình.")
+                                            vm.setMessage(R.string.error_config_client)
                                         }
                                     }
                             )
@@ -273,9 +303,9 @@ fun Register_Screen(
 
                         Spacer(Modifier.height(16.dp))
                         Row {
-                            Text("Bạn đã có tài khoản? ")
+                            Text(stringResource(R.string.have_account))
                             Text(
-                                "Đăng nhập",
+                                stringResource(R.string.login_link),
                                 modifier = Modifier
                                     .clickable {
                                         navController.navigate("login")

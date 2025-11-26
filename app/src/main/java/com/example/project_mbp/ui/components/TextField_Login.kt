@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -31,7 +32,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun TextField_Custom(label: String, value: String, onChange: (String) -> Unit) {
-    val checkIconPass = label.contains("Mật khẩu", ignoreCase = true)
+    val checkIconPass = label.contains(stringResource(R.string.password_hint), ignoreCase = true)
     var passwordVisible by remember { mutableStateOf(false) }
 
 
