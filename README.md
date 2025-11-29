@@ -1,7 +1,5 @@
 # 💰 ỨNG DỤNG TÀI CHÍNH NHỎ (Mini Financial Management App)
 
-![QR Code Link Dự Án](https://i.imgur.com/KxJ6wQ2.png) 
-*Quét mã QR để truy cập link GitHub này.*
 
 >**"Tài Chính Nhỏ"** là ứng dụng di động được xây dựng trên nền tảng **Android** và ngôn ngữ **Kotlin**, giúp người dùng dễ dàng **ghi chép, theo dõi, thống kê** các khoản thu nhập và chi tiêu cá nhân một cách hợp lý. Mục tiêu là cung cấp một giải pháp hiện đại, tự động hóa việc tổng hợp và phân tích dữ liệu tài chính, từ đó hỗ trợ người dùng kiểm soát ngân sách hiệu quả, tránh chi tiêu quá độ.
 
